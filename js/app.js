@@ -37,16 +37,12 @@ document.addEventListener('DOMContentLoaded', () => {
   
 });  
 
+
 function createLI(nombre, confirmado) {
   function createElement(elementName, property, value) {
     const element = document.createElement(elementName);  
     element[property] = value; 
-
-    //esto no lo hace
-    if(value == "checkbox" && confirmado){
-      console.log(document.getElementsByTagName("checkbox").checked = true)
-      li.getElementsByTagName("checkbox").checked = true;
-    }
+        
     return element;
   }
   
@@ -55,17 +51,21 @@ function createLI(nombre, confirmado) {
     li.appendChild(element); 
     return element;
   }
-
+  
   // console.log(nombre)
   
   const li = document.createElement('li');
   appendToLI('span', 'textContent', nombre);     
   appendToLI('label', 'textContent', 'Confirmed')
-    .appendChild(createElement('input', 'type', 'checkbox'));
+  .appendChild(createElement('input', 'type', 'checkbox'));
   appendToLI('button', 'textContent', 'edit');
   appendToLI('button', 'textContent', 'remove');
   
   ul.appendChild(li);
+  if(confirmado){
+    li.querySelector("input[type='checkbox']").checked = true;
+    li.className = 'responded';
+  }
   return li;
 }
 

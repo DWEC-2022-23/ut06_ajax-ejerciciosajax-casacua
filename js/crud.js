@@ -16,7 +16,7 @@ const promesa = mostrar();
 promesa
 .then(function imprimirPosts(json) {
     const listaInvitados = JSON.parse(json);
-    listaInvitados.forEach(invitado => createLI(invitado.nombre, invitado.confirmado))
+    listaInvitados.forEach(invitado => createLI(invitado.nombre, invitado.confirmado));
     console.log('ok')
   })
  // .then(ul.appendChild(li))
