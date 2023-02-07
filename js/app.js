@@ -37,7 +37,9 @@ document.addEventListener('DOMContentLoaded', () => {
   
 });  
 
-
+/**
+ * ! Creamos de manera dinamica el contenido del fichero JSON, llamandola desde la funcion MOSTRAR()
+ */
 function createLI(nombre, confirmado) {
   function createElement(elementName, property, value) {
     const element = document.createElement(elementName);  
@@ -62,6 +64,9 @@ function createLI(nombre, confirmado) {
   appendToLI('button', 'textContent', 'remove');
   
   ul.appendChild(li);
+  /**
+  * ! Comprobamos que si el checkbox esta activado se añada la clase "responded"
+  */
   if(confirmado){
     li.querySelector("input[type='checkbox']").checked = true;
     li.className = 'responded';
@@ -69,13 +74,20 @@ function createLI(nombre, confirmado) {
   return li;
 }
 
+/**
+  * ! Al invitar a alguien, captura el valor del input, crea un nuevo invitado con CREATELI() y borra el valor del input 
+  */
 form.addEventListener('submit', (e) => {
   e.preventDefault();
   const text = input.value;
   input.value = '';
   const li = createLI(text);
+  crear(text);
 });
   
+  /**
+  * ! Cambiamos el estado de confirmado o no confirmado del invitado en cuestion
+  */
 ul.addEventListener('change', (e) => {
   const checkbox = event.target;
   const checked = checkbox.checked;
@@ -87,7 +99,10 @@ ul.addEventListener('change', (e) => {
     listItem.className = '';
   }
 });
-  
+
+  /**
+  * ! En el momento en el que se pulsa uno de los botones dentro de un invitado salta este evento. Dependiendo de si ha pulsado sobre borrar, editar o guardar. 
+  */
 ul.addEventListener('click', (e) => {
   if (e.target.tagName === 'BUTTON') {
     const button = e.target;
@@ -96,6 +111,7 @@ ul.addEventListener('click', (e) => {
     const action = button.textContent;
     const nameActions = {
       remove: () => {
+        borrar(li);
         ul.removeChild(li);
       },
       edit: () => {

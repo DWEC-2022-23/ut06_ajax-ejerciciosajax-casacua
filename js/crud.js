@@ -1,17 +1,18 @@
+/**
+ * ! Al inicializar la pagina, muestra todos los invitados que haya en el fichero JSON
+*/
+const requestURL = "http://localhost:3000/invitados";
+const xhr = new XMLHttpRequest();
 
-    // const requestURL = "http://localhost:3000/invitados";
-    // const request = new XMLHttpRequest();
+class Invitado {
+    constructor(id, nombre, confirmado) {
+        this.id = id;
+        this.nombre = nombre;
+        this.confirmado = confirmado;
+    }
+}
 
-    // request.open('GET', requestURL);
-    // request.responseType = 'json';
-    // request.send();
-// console.log(JSON.stringify(request));
-
-// if (document.readyState == 'loading') {
-//     document.addEventListener('DOMContentLoaded', mostrar);
-// }
-
-const promesa = mostrar();
+const promesa = mostrar(requestURL);
 
 promesa
 .then(function imprimirPosts(json) {
@@ -24,14 +25,30 @@ promesa
     console.log('Error: ', error)
   })
 
-function crear(invitado) {
-    
+/**
+ * ! Cuando se crea un invitado, guardar cambios en el fichero JSON
+ */
+function crear(nombre) {
+    let nuevoInvitado = new Invitado(0, nombre, false);
+    let inv = JSON.stringify(nuevoInvitado);
+    // Definir la comunicación
+    xhr.open( "POST", requestURL, true );
+    // Cabeceras de la solicitud como si fuera un formulario, necesario si se utiliza POST
+    xhr.setRequestHeader("Content-type", "application/json");
+    //Enviamos los parámetros
+    xhr.send(inv);
+    let i = 0;
+    //Cómo asignar id
+    inv.dataset[id] = i++;
+    console.log(inv);
 }
 
-function mostrar() {
-    const requestURL = "http://localhost:3000/invitados";
+
+/**
+ * ! Aqui se muestran todos los datos que tiene el json. Debe llamarse despues de cada actualizacion
+ */
+function mostrar(url) {
     return new Promise (function (resolve, reject){
-        const xhr = new XMLHttpRequest();
         xhr.timeout = 3000;
         xhr.onreadystatechange = function(e){
             if(xhr.readyState === 4){
@@ -45,15 +62,32 @@ function mostrar() {
         xhr.ontimeout = function(){
             reject("timeout");
         };
-        xhr.open("GET", requestURL, true);
+        xhr.open("GET", url, true);
         xhr.send();
     });
 }
 
+/**
+ * TODO Cuando se actualiza un invitado, guardar cambios en el fichero JSON
+ */
 function actualizar(invitado) {
     
 }
 
+/**
+ * TODO Cuando se borra un invitado, guardar cambios en el fichero JSON
+ */
 function borrar(invitado) {
-    
+    console.log(invitado)
+
+    let borrar = invitado.querySelector("span").textContent;
+    // let inv = JSON.stringify(nuevoInvitado);
+    // Definir la comunicación
+    xhr.open( "DELETE", requestURL/* + "/" + id*/, true);
+    // Cabeceras de la solicitud como si fuera un formulario, necesario si se utiliza POST
+    // xhr.setRequestHeader("Content-type", "application/json");
+    //Enviamos los parámetros
+    xhr.send();
+    console.log(xhr)
+    // forEach()
 }
