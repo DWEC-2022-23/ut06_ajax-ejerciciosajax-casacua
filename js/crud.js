@@ -38,8 +38,9 @@ function crear(nombre) {
     //Enviamos los parámetros
     xhr.send(inv);
     let i = 0;
-    //Cómo asignar id
-    inv.dataset[id] = i++;
+    //!!Cómo asignar id
+    let id = inv.dataset.id;
+    console.log(id)
     console.log(inv);
 }
 
@@ -79,11 +80,12 @@ function actualizar(invitado) {
  */
 function borrar(invitado) {
     console.log(invitado)
-
+//!Eto eh así?
     let borrar = invitado.querySelector("span").textContent;
+    borrar = invitado.id;
     // let inv = JSON.stringify(nuevoInvitado);
     // Definir la comunicación
-    xhr.open( "DELETE", requestURL/* + "/" + id*/, true);
+    xhr.open( "DELETE", requestURL + "/" + borrar, true);
     // Cabeceras de la solicitud como si fuera un formulario, necesario si se utiliza POST
     // xhr.setRequestHeader("Content-type", "application/json");
     //Enviamos los parámetros
