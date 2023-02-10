@@ -84,13 +84,8 @@ form.addEventListener('submit', async (e) => {
 
   crear(text);
   let li = createLI(text);
-  // esperando();
   await new Promise(r => setTimeout(r, 125));
   let invitado = await search("nombre=" + text);
-  // console.log(invitado)
-  // console.log(li)
-
-  // invitado = invitado[0];
 
   li.id = invitado[0].id;
   ul.appendChild(li);
@@ -109,8 +104,12 @@ ul.addEventListener('change', (e) => {
   } else {
     listItem.className = '';
   }
-  // console.log(checkbox.parentNode)
-  actualizar(listItem);
+  // console.log("DESDE CHECK")
+  // console.log(listItem)
+
+  if(!listItem.querySelector("li")){
+    console.log("Ha")
+    actualizar(listItem);};
 });
 
 /**
@@ -143,6 +142,8 @@ ul.addEventListener('click', (e) => {
         li.insertBefore(span, input);
         li.removeChild(input);
         button.textContent = 'edit';
+        // console.log(li)
+        // console.log("DESDE SAVE")
         // console.log(li)
         actualizar(li);
       }
