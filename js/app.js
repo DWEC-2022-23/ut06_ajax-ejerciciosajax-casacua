@@ -8,7 +8,7 @@ const div = document.createElement('div');
 const filterLabel = document.createElement('label');
 const filterCheckBox = document.createElement('input');
 
-document.addEventListener('DOMContentLoaded', () => {  
+document.addEventListener('DOMContentLoaded', () => {
   filterLabel.textContent = "Ocultar los que no hayan respondido";
   filterCheckBox.type = 'checkbox';
   div.appendChild(filterLabel);
@@ -17,92 +17,105 @@ document.addEventListener('DOMContentLoaded', () => {
   filterCheckBox.addEventListener('change', (e) => {
     const isChecked = e.target.checked;
     const lis = ul.children;
-    if(isChecked) {
+    if (isChecked) {
       for (let i = 0; i < lis.length; i += 1) {
         let li = lis[i];
         if (li.className === 'responded') {
-          li.style.display = '';  
+          li.style.display = '';
         } else {
-          li.style.display = 'none';                        
+          li.style.display = 'none';
         }
       }
     } else {
       for (let i = 0; i < lis.length; i += 1) {
         let li = lis[i];
         li.style.display = '';
-      }                                 
+      }
     }
   });
-  
-  
-});  
+
+
+});
 
 /**
  * ! Creamos de manera dinamica el contenido del fichero JSON, llamandola desde la funcion MOSTRAR()
  */
 function createLI(nombre, confirmado) {
   function createElement(elementName, property, value) {
-    const element = document.createElement(elementName);  
-    element[property] = value; 
-        
+    const element = document.createElement(elementName);
+    element[property] = value;
     return element;
   }
-  
+
   function appendToLI(elementName, property, value) {
-    const element = createElement(elementName, property, value);     
-    li.appendChild(element); 
+    const element = createElement(elementName, property, value);
+    li.appendChild(element);
     return element;
   }
-  
+
   // console.log(nombre)
-  
+
   const li = document.createElement('li');
-  appendToLI('span', 'textContent', nombre);     
+  appendToLI('span', 'textContent', nombre);
   appendToLI('label', 'textContent', 'Confirmed')
-  .appendChild(createElement('input', 'type', 'checkbox'));
+    .appendChild(createElement('input', 'type', 'checkbox'));
   appendToLI('button', 'textContent', 'edit');
   appendToLI('button', 'textContent', 'remove');
-  
-  ul.appendChild(li);
+
+  // ul.appendChild(li);
   /**
   * ! Comprobamos que si el checkbox esta activado se añada la clase "responded"
   */
-  if(confirmado){
+  if (confirmado) {
     li.querySelector("input[type='checkbox']").checked = true;
     li.className = 'responded';
   }
+
   return li;
 }
 
 /**
-  * ! Al invitar a alguien, captura el valor del input, crea un nuevo invitado con CREATELI() y borra el valor del input 
+  * * Al invitar a alguien, captura el valor del input, crea un nuevo invitado con CREATELI() y borra el valor del input 
   */
-form.addEventListener('submit', (e) => {
+form.addEventListener('submit', async (e) => {
   e.preventDefault();
   const text = input.value;
   input.value = '';
-  const li = createLI(text);
+
   crear(text);
+  let li = createLI(text);
+  // esperando();
+  await new Promise(r => setTimeout(r, 125));
+  let invitado = await search("nombre=" + text);
+  // console.log(invitado)
+  // console.log(li)
+
+  // invitado = invitado[0];
+
+  li.id = invitado[0].id;
+  ul.appendChild(li);
 });
-  
-  /**
-  * ! Cambiamos el estado de confirmado o no confirmado del invitado en cuestion
-  */
+
+/**
+* ! Cambiamos el estado de confirmado o no confirmado del invitado en cuestion
+*/
 ul.addEventListener('change', (e) => {
   const checkbox = event.target;
   const checked = checkbox.checked;
   const listItem = checkbox.parentNode.parentNode;
-  
+
   if (checked) {
     listItem.className = 'responded';
   } else {
     listItem.className = '';
   }
+  // console.log(checkbox.parentNode)
+  actualizar(listItem);
 });
 
-  /**
-  * ! En el momento en el que se pulsa uno de los botones dentro de un invitado salta este evento. Dependiendo de si ha pulsado sobre borrar, editar o guardar. 
-  */
+/**
+* ! En el momento en el que se pulsa uno de los botones dentro de un invitado salta este evento. Dependiendo de si ha pulsado sobre borrar, editar o guardar. 
+*/
 ul.addEventListener('click', (e) => {
   if (e.target.tagName === 'BUTTON') {
     const button = e.target;
@@ -121,7 +134,7 @@ ul.addEventListener('click', (e) => {
         input.value = span.textContent;
         li.insertBefore(input, span);
         li.removeChild(span);
-        button.textContent = 'save';  
+        button.textContent = 'save';
       },
       save: () => {
         const input = li.firstElementChild;
@@ -129,23 +142,24 @@ ul.addEventListener('click', (e) => {
         span.textContent = input.value;
         li.insertBefore(span, input);
         li.removeChild(input);
-        button.textContent = 'edit';        
+        button.textContent = 'edit';
+        // console.log(li)
+        actualizar(li);
       }
     };
-    
+
     // select and run action in button's name
     nameActions[action]();
   }
-});  
-  
+});
+
 
 
 // html.dataset.atributo = valor
-  
-  
-  
-  
-  
-  
-  
-  
+
+
+
+
+
+
+

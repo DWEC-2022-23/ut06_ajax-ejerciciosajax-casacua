@@ -15,52 +15,51 @@ class Invitado {
 const promesa = mostrar(requestURL);
 
 promesa
-.then(function imprimirPosts(json) {
-    const listaInvitados = JSON.parse(json);
-    listaInvitados.forEach(invitado => createLI(invitado.nombre, invitado.confirmado));
-    console.log('ok')
-  })
- // .then(ul.appendChild(li))
-  .catch(function handleErrors(error) {
-    console.log('Error: ', error)
-  })
+    .then(function imprimirPosts(json) {
+        const listaInvitados = JSON.parse(json);
+        listaInvitados.forEach(invitado => {
+            let li = createLI(invitado.nombre, invitado.confirmado)
+            li.id = invitado.id;
+            ul.appendChild(li);
+        });
+        console.log('ok')
+    })
+    .catch(function handleErrors(error) {
+        console.log('Error: ', error)
+    })
 
 /**
  * ! Cuando se crea un invitado, guardar cambios en el fichero JSON
  */
 function crear(nombre) {
+    const request = new XMLHttpRequest();
     let nuevoInvitado = new Invitado(0, nombre, false);
-    let inv = JSON.stringify(nuevoInvitado);
     // Definir la comunicación
-    xhr.open( "POST", requestURL, true );
+    request.open("POST", requestURL, true);
     // Cabeceras de la solicitud como si fuera un formulario, necesario si se utiliza POST
-    xhr.setRequestHeader("Content-type", "application/json");
+    request.setRequestHeader("Content-type", "application/json");
     //Enviamos los parámetros
-    xhr.send(inv);
-    let i = 0;
-    //!!Cómo asignar id
-    let id = inv.dataset.id;
-    console.log(id)
-    console.log(inv);
+    request.send(JSON.stringify(nuevoInvitado));
+    // console.log(nuevoInvitado);
+    // return nuevoInvitado;
 }
-
 
 /**
  * ! Aqui se muestran todos los datos que tiene el json. Debe llamarse despues de cada actualizacion
  */
 function mostrar(url) {
-    return new Promise (function (resolve, reject){
+    return new Promise(function (resolve, reject) {
         xhr.timeout = 3000;
-        xhr.onreadystatechange = function(e){
-            if(xhr.readyState === 4){
-                if(xhr.status === 200){
+        xhr.onreadystatechange = function (e) {
+            if (xhr.readyState === 4) {
+                if (xhr.status === 200) {
                     resolve(xhr.response);
-                } else{
+                } else {
                     reject(xhr.status);
                 }
             }
         };
-        xhr.ontimeout = function(){
+        xhr.ontimeout = function () {
             reject("timeout");
         };
         xhr.open("GET", url, true);
@@ -69,27 +68,46 @@ function mostrar(url) {
 }
 
 /**
- * TODO Cuando se actualiza un invitado, guardar cambios en el fichero JSON
+ * ! Cuando se actualiza un invitado, guardar cambios en el fichero JSON
  */
 function actualizar(invitado) {
-    
+    let objeto = new Invitado(invitado.id, invitado.firstElementChild.textContent, invitado.querySelector("input").checked);
+    // console.log(objeto)
+    xhr.open("PUT", requestURL + "/" + objeto.id, true);
+    xhr.setRequestHeader("Content-type", "application/json");
+    xhr.send(JSON.stringify(objeto));
 }
 
 /**
- * TODO Cuando se borra un invitado, guardar cambios en el fichero JSON
+ * ! Cuando se borra un invitado, guardar cambios en el fichero JSON
  */
 function borrar(invitado) {
-    console.log(invitado)
-//!Eto eh así?
-    let borrar = invitado.querySelector("span").textContent;
-    borrar = invitado.id;
-    // let inv = JSON.stringify(nuevoInvitado);
-    // Definir la comunicación
-    xhr.open( "DELETE", requestURL + "/" + borrar, true);
-    // Cabeceras de la solicitud como si fuera un formulario, necesario si se utiliza POST
-    // xhr.setRequestHeader("Content-type", "application/json");
-    //Enviamos los parámetros
+    xhr.open("DELETE", requestURL + "/" + invitado.id, true);
     xhr.send();
-    console.log(xhr)
-    // forEach()
+}
+
+function search(predicate) {
+    console.log("Entrando en search")
+    const request = new XMLHttpRequest();
+    return new Promise(function (resolve, reject) {
+        request.open("GET", requestURL + "?" + predicate, true);
+        // console.log(requestURL + "?" + predicate)
+        request.send();
+        request.onload = () => {
+            console.log("todo bien")
+            /*if (request.status == 200)*/resolve(JSON.parse(request.response))
+        }
+        request.onerror = () => {
+            console.log("error")
+            reject("Se ha roto algo :(")
+        };
+    })
+}
+
+function esperando() {
+    return new Promise(() => {
+      setTimeout(() => {
+        console.log("Retornando");
+      }, 2000);
+    });
 }
